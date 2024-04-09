@@ -10,11 +10,28 @@ var tileX, tileY;
 
 //tablero variables 
 var tablero;
-var filas = 250;
-var columnas = 250;
+var filas = 100;
+var columnas = 100;
 
 var white = '#010400';
 var black = '#EAF9D9';
+
+var ratonX = 0;
+var ratonY = 0;
+
+function clicRaton(e){
+  console.log(ratonX + " - " + ratonY);
+}
+
+function sueltaRaton(e){
+  console.log('raton soltado');
+  cambiaRaton();
+}
+
+function posicionRaton(e){
+  ratonX = e.pageX;
+  ratonY = e.pageY;
+}
 
 
 
@@ -65,10 +82,13 @@ var Agente = function(x,y,estado){
             color = black;
         }
         ctx.fillStyle = color;
-        ctx.fillRect(this.x *tileX*2 , this.y*2 *tileY,tileX,tileY);
+        ctx.fillRect(this.x *tileX , this.y *tileY,tileX,tileY);
     }
     //leyes conway 
 
+    this.pintaEstado = function(est){
+		this.estado = est;
+	}
     this.nuevoCiclo = function(){
         var suma = 0;
         for(let i = 0;i<this.vecinos.length;i++){
@@ -93,12 +113,21 @@ var Agente = function(x,y,estado){
 
 }
 
+
+
+function cambiaRaton(){
+	
+    var obj = new Agente(ratonX,ratonY, 2);
+    obj.addVecinos();
+}
+
 function starterTablero(obj){
     var estado; 
 
     for(let i = 0 ; i<filas ; i++){
         for(let j = 0 ; j<columnas ; j++){
             estado = Math.floor(Math.random()*2);
+            
             obj[i][j]= new Agente(i,j,estado);
         }   
     }
@@ -118,6 +147,13 @@ function starter(){
 
     canvas.width = canvasX;
     canvas.height = canvasY;
+
+    //RATÓN
+	canvas.addEventListener('mousedown',clicRaton,false);
+	canvas.addEventListener('mouseup',sueltaRaton,false);
+	canvas.addEventListener('mousemove',posicionRaton,false);
+	
+	
 
     tileX = Math.floor(canvasX/filas);
     tileY = Math.floor(canvasY/columnas);
